@@ -5,7 +5,13 @@ const rl = createInterface({
   output: process.stdout,
 });
 
+
+const commands = ["cd", "ls", "pwd", "exit"];
+
 // Uncomment this block to pass the first stage
-rl.question("$ ", (answer) => {
+rl.question("$ ", (answer: string) => {
+  if (!commands.includes(answer)) {
+    console.log("Command not found");
+  }
   rl.close();
 });
