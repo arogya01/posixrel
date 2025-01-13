@@ -11,7 +11,7 @@ const commands = ["cd", "ls", "pwd", "exit"];
 // Uncomment this block to pass the first stage
 rl.question("$ ", (answer: string) => {
   if (!commands.includes(answer)) {
-    console.log("Command not found");
+    console.log(`${answer}: command not found`);
   }
   rl.close();
 });
