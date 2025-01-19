@@ -11,7 +11,7 @@ const commands = ["cd", "ls", "pwd", "exit"];
 // Uncomment this block to pass the first stage
 const question = () => {rl.question("$ ", (answer: string) => {
 
-  if(answer === "exit"){
+  if(answer === ".exit"){
     rl.close();
   }
 
