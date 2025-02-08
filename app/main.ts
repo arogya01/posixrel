@@ -18,6 +18,8 @@ const question = () => {
       const output = answer.split(" ").slice(1).join(" ") || "";
       if (validCommands.includes(output)) {
         console.log(`${output} is a shell builtin`);
+      } else {
+        console.log(`${output}: not found`);
       }
     } else if (answer.startsWith("echo")) {
       const output = answer.split(" ").slice(1).join(" ") || "";
