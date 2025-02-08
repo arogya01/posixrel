@@ -5,17 +5,19 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-const commands = ["cd", "ls", "pwd"];
+const commands = ["cd", "ls", "pwd", "echo"];
 
 // Uncomment this block to pass the first stage
 const question = () => {
   rl.question("$ ", (answer: string) => {
     if (answer === "exit 0") {
-      rl.close();
-      return;
+      process.exit(0);
     }
 
-    if (!commands.includes(answer)) {
+    if (answer.startsWith("echo")) {
+      const output = answer.split(" ").slice(1).join(" ") || "";
+      console.log(output);
+    } else if (!commands.includes(answer)) {
       console.log(`${answer}: command not found`);
     }
 
