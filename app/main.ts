@@ -5,21 +5,22 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-
-const commands = ["cd", "ls", "pwd", "exit"];
+const commands = ["cd", "ls", "pwd"];
 
 // Uncomment this block to pass the first stage
-const question = () => {rl.question("$ ", (answer: string) => {
+const question = () => {
+  rl.question("$ ", (answer: string) => {
+    if (answer === "exit 0") {
+      rl.close();
+      return;
+    }
 
-  if(answer === ".exit"){
-    rl.close();
-  }
+    if (!commands.includes(answer)) {
+      console.log(`${answer}: command not found`);
+    }
 
-  if (!commands.includes(answer)) {
-    console.log(`${answer}: command not found`);
-    question(); 
-  }
-  
-})};
+    question();
+  });
+};
 
-question(); 
+question();
