@@ -21,15 +21,13 @@ const question = () => {
         console.log(`${output} is a shell builtin`);
       } else {
         let found = false; 
-        const paths = process.env.PATH?.split(":"); 
+        const paths = process.env.PATH?.split(":") ?? []; 
         paths?.forEach((path)=> {
           try{
             const cmds = fs.readdirSync(path).filter((cmd) => cmd === output); 
-            if(cmds.length > 0){
+            if(cmds.length > 0 && !found){
               found= true; 
-              cmds.forEach(() => {
-                console.log(`${output} is ${path}/${output}`); 
-              }); 
+              console.log(`${output} is ${path}/${output}`); 
             }
           }
           catch(error){
