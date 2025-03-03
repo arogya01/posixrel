@@ -63,13 +63,15 @@ const question = () => {
         try{
           const foundCommand = fs.readdirSync(path).find((file) => file === cmd);
           if(foundCommand){
-            found = true; 
-            const result = execSync(`${path}/${foundCommand} ${args.join(" ")}`); 
-            console.log(result.toString()); 
+            found = true;             
+            process.chdir(path);
+            const result = execSync(`${foundCommand} ${args.join(" ")}`).toString().trim();
+            console.log(result);
             break;
           }
         }
         catch(error){          
+          continue; 
         }
       }
       if(!found){
