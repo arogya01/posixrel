@@ -20,8 +20,7 @@ const rl = createInterface({
 // Arg #1: alice
 // Program Signature: 5998595441
 
-const commands = ["cd", "ls", "pwd", "echo"];
-const validCommands = ["type", "echo", "exit"];
+const validCommands = ["type", "echo", "exit", "pwd", "cd", "ls", "cat"];
 const paths = (process.env.PATH as string).split(":") ?? [];
 
 const question = () => {
@@ -61,7 +60,7 @@ const question = () => {
     else if(cmd === "pwd"){
       console.log(process.cwd());
     }
-    else if (!commands.includes(cmd)) {
+    else if (!validCommands.includes(cmd)) {
       let found = false; 
       for(const path of paths){
         try{
