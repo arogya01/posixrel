@@ -57,7 +57,11 @@ const question = () => {
     } else if (cmd === "echo") {
       const output = args.join(" ") || "";
       console.log(output);
-    } else if (!commands.includes(cmd)) {
+    } 
+    else if(cmd === "pwd"){
+      console.log(process.cwd());
+    }
+    else if (!commands.includes(cmd)) {
       let found = false; 
       for(const path of paths){
         try{
