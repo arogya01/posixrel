@@ -20,7 +20,7 @@ const rl = createInterface({
 // Arg #1: alice
 // Program Signature: 5998595441
 
-const validCommands = ["type", "echo", "exit", "pwd", "cd", "ls", "cat"];
+const validCommands = ["type", "echo", "exit", "pwd", "cd", "ls"];
 const paths = (process.env.PATH as string).split(":") ?? [];
 
 const question = () => {
