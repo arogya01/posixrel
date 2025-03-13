@@ -50,22 +50,22 @@ function cdCommand(args: string[]){
       const err = error as NodeJS.ErrnoException; // Type assertion for Node.js error
         switch (err.code) {
             case 'ENOENT':
-                console.log(`cd: '${targetPath}': No such file or directory`);
+                console.log(`cd: ${targetPath}: No such file or directory`);
                 break;
             case 'EACCES':
-                console.log(`cd: '${targetPath}': Permission denied`);
+                console.log(`cd: ${targetPath}: Permission denied`);
                 break;
             case 'ENOTDIR':
-                console.log(`cd: '${targetPath}': Not a directory`);
+                console.log(`cd: ${targetPath}: Not a directory`);
                 break;
             case 'EINVAL':
-                console.log(`cd: '${targetPath}': Invalid path`);
+                console.log(`cd: ${targetPath}: Invalid path`);
                 break;
             case 'EPERM':
-                console.log(`cd: '${targetPath}': Operation not permitted`);
+                console.log(`cd: ${targetPath}: Operation not permitted`);
                 break;
             case 'ENAMETOOLONG':
-                console.log(`cd: '${targetPath}': Path name too long`);
+                console.log(`cd: ${targetPath}: Path name too long`);
                 break;
             default:
                 console.log(`cd: An unexpected error occurred: ${err.message}`);
