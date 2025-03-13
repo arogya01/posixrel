@@ -2,6 +2,7 @@ import { createInterface } from "readline";
 import fs from "fs"; 
 import { execSync } from "child_process"; 
 import os  from "os";
+import path from "path"; 
 
 const rl = createInterface({
   input: process.stdin,
@@ -24,30 +25,8 @@ const rl = createInterface({
 const validCommands = ["type", "echo", "exit", "pwd", "cd", "ls"];
 const paths = (process.env.PATH as string).split(":") ?? [];
 
-function cdCommand(args: string[]){
-  const path = args[0];
-  if(args.length === 0){
-    process.chdir(os.homedir());
-    return;
-  }
-
-  
-  if(args.length  === 1){
-    const targetPath = args[0]; 
-    if(targetPath.startsWith("~")){
-      process.chdir(os.homedir());
-      return;
-    }
-    else if(targetPath.startsWith("~/")){
-      process.chdir(os.homedir() + args[0].slice(1));
-    }
-
-    try{
-      process.chdir(path);
-      return;
-    }
-    catch(error){
-      const err = error as NodeJS.ErrnoException; // Type assertion for Node.js error
+const processCDErrors = (error: unknown, targetPath:string) => {
+  const err = error as NodeJS.ErrnoException; // Type assertion for Node.js error
         switch (err.code) {
             case 'ENOENT':
                 console.log(`cd: ${targetPath}: No such file or directory`);
@@ -71,17 +50,62 @@ function cdCommand(args: string[]){
                 console.log(`cd: An unexpected error occurred: ${err.message}`);
                 break;
         }
+}
+
+const cdCommand = (args: string[]) => {
+  // Handle case: no arguments provided
+  if (args.length === 0) {
+    process.chdir(os.homedir());
+    return;
+  }
+
+  // Handle case: too many arguments
+  if (args.length > 1) {
+    console.log("cd: Too many arguments");
+    return;
+  }
+
+  // Single argument case
+  const targetPath = args[0];
+
+  try {
+    // Case 1: Home directory ("~")
+    if (targetPath === "~") {
+      process.chdir(os.homedir());
+      return;
     }
 
-  }
-  else{
-    console.log('cd: Too many arguments');
-  }
+    // Case 2: Path relative to home directory ("~/...")
+    if (targetPath.startsWith("~/")) {
+      const relativePath = targetPath.slice(2); // Remove "~/"
+      const fullPath = path.join(os.homedir(), relativePath);
+      process.chdir(fullPath);
+      return;
+    }
 
-  
-  
+    // Case 3: Absolute path
+    if (path.isAbsolute(targetPath)) {
+      process.chdir(targetPath);
+      return;
+    }
 
-}
+    // Case 4: Relative path
+    const normalizedPath = path.normalize(targetPath);
+    const pathSegments = normalizedPath.split(path.sep).filter(segment => segment !== "");
+
+    pathSegments.forEach(segment => {
+      if (segment === "..") {
+        const parentDir = path.dirname(process.cwd());
+        process.chdir(parentDir);
+      } else if (segment !== ".") {
+        process.chdir(segment);
+      }
+      // "." is skipped (no action needed)
+    });
+  } catch (error) {
+    processCDErrors(error, targetPath);
+  }
+};
 
 const question = () => {
   rl.question("$ ", (answer: string) => {
