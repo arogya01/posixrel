@@ -1,6 +1,7 @@
 import { createInterface } from "readline";
 import fs from "fs"; 
 import { execSync } from "child_process"; 
+import os  from "os";
 
 const rl = createInterface({
   input: process.stdin,
@@ -22,6 +23,65 @@ const rl = createInterface({
 
 const validCommands = ["type", "echo", "exit", "pwd", "cd", "ls"];
 const paths = (process.env.PATH as string).split(":") ?? [];
+
+function cdCommand(args: string[]){
+  const path = args[0];
+  if(args.length === 0){
+    process.chdir(os.homedir());
+    return;
+  }
+
+  
+  if(args.length  === 1){
+    const targetPath = args[0]; 
+    if(targetPath.startsWith("~")){
+      process.chdir(os.homedir());
+      return;
+    }
+    else if(targetPath.startsWith("~/")){
+      process.chdir(os.homedir() + args[0].slice(1));
+    }
+
+    try{
+      process.chdir(path);
+      return;
+    }
+    catch(error){
+      const err = error as NodeJS.ErrnoException; // Type assertion for Node.js error
+        switch (err.code) {
+            case 'ENOENT':
+                console.log(`cd: '${targetPath}': No such file or directory`);
+                break;
+            case 'EACCES':
+                console.log(`cd: '${targetPath}': Permission denied`);
+                break;
+            case 'ENOTDIR':
+                console.log(`cd: '${targetPath}': Not a directory`);
+                break;
+            case 'EINVAL':
+                console.log(`cd: '${targetPath}': Invalid path`);
+                break;
+            case 'EPERM':
+                console.log(`cd: '${targetPath}': Operation not permitted`);
+                break;
+            case 'ENAMETOOLONG':
+                console.log(`cd: '${targetPath}': Path name too long`);
+                break;
+            default:
+                console.log(`cd: An unexpected error occurred: ${err.message}`);
+                break;
+        }
+    }
+
+  }
+  else{
+    console.log('cd: Too many arguments');
+  }
+
+  
+  
+
+}
 
 const question = () => {
   rl.question("$ ", (answer: string) => {
@@ -59,6 +119,9 @@ const question = () => {
     } 
     else if(cmd === "pwd"){
       console.log(process.cwd());
+    }
+    else if(cmd === "cd"){
+      cdCommand(args);
     }
     else if (!validCommands.includes(cmd)) {
       let found = false; 
